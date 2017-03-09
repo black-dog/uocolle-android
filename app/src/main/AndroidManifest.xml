@@ -9,6 +9,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
+
+        </activity>
+        <activity
+            android:name=".FishListActivity"
+            android:label="@string/title_activity_fish_list"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".FishsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
