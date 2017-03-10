@@ -1,7 +1,12 @@
 package com.example.jmason.uocolle;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.jmason.uocolle.adapter.ImageArrayAdapter;
 import com.example.jmason.uocolle.container.FishContainer;
@@ -23,5 +28,14 @@ public class FishsActivity extends CommonActivity {
 
         ListView fishs = (ListView) findViewById(R.id.listView1);
         fishs.setAdapter(adapter);
+        fishs.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fish fish = FishContainer.fishes.get(position);
+                Intent intent = new Intent(FishsActivity.this, FishActivity.class);
+                intent.putExtra("position", position);
+                startActivity(intent);
+            }
+        });
     }
 }
