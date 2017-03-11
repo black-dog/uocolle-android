@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "name": "鯵",
+    "hiragana": "あじ",
+    "character": "ザ・大衆魚",
+    "taste": "美味",
+    "value": "200円/1尾(25cm)",
+    "habitat": "日本全般",
+    "poison": "無し",
+    "imageId": "aji"
+  },
+  {
+    "id": 2,
+    "name": "真鯛",
+    "hiragana": "まだい",
+    "character": "くさっても",
+    "taste": "淡白な白身魚。それなりに美味しい",
+    "value": "2000円/1尾(50cm)",
+    "habitat": "日本全般",
+    "poison": "無し",
+    "imageId": "madai"
+  },
+  {
+    "id": 3,
+    "name": "真ハタ",
+    "hiragana": "まはた",
+    "character": "たまに釣れる。",
+    "taste": "刺し身最高。しゃぶしゃぶはもったいない",
+    "value": "10000円/1尾(50cm)",
+    "habitat": "日本全般",
+    "poison": "無し",
+    "imageId": "mahata"
+  }
+]
