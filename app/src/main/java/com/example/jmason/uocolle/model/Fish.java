@@ -6,7 +6,7 @@ package com.example.jmason.uocolle.model;
 
 public class Fish {
 
-    private int id;
+    private String id;
     private String name;
     private String hiragana;
     private String character;
@@ -16,11 +16,11 @@ public class Fish {
     private String poison;
     private String imageId;
 
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
 

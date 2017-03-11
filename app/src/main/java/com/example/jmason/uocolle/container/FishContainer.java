@@ -15,7 +15,7 @@ import java.util.Map;
 public class FishContainer {
 
     public static List<Fish> fishes;
-    public static Map<Integer, Fish> fishesMap = new HashMap<Integer, Fish>();
+    public static Map<String, Fish> fishesMap = new HashMap<String, Fish>();
 
     public static boolean isInitialized() {
         return fishes != null;

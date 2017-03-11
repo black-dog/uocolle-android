@@ -33,7 +33,7 @@ public class FishsActivity extends CommonActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Fish fish = FishContainer.fishes.get(position);
                 Intent intent = new Intent(FishsActivity.this, FishActivity.class);
-                intent.putExtra("position", position);
+                intent.putExtra("id", fish.getId());
                 startActivity(intent);
             }
         });

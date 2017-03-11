@@ -2,8 +2,13 @@ package com.example.jmason.uocolle;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.ImageFormat;
+import android.graphics.Matrix;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -14,6 +19,7 @@ import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Bundle;
@@ -26,12 +32,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
+import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,18 +49,28 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 import com.example.jmason.uocolle.camera.CameraPreview;
+import com.example.jmason.uocolle.container.FishContainer;
+import com.example.jmason.uocolle.model.Fish;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HeaderElement;
+import cz.msebera.android.httpclient.ParseException;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends CommonActivity {
 
     private static final String TAG = "AndroidCameraApi";
     private Button takePictureButton;
+    private Button listButton;
     private TextureView textureView;
     private static final SparseIntArray ORIENTATIONS = new SparseIntArray();
     static {
@@ -86,13 +104,17 @@ public class MainActivity extends AppCompatActivity {
         takePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                File file = takePicture();
-                Log.i(TAG, file.toString());
+                File file1 = takePicture();
+                Log.i(TAG, file1.toString());
                 AsyncHttpClient client = new AsyncHttpClient();
                 RequestParams params = new RequestParams();
+                client.addHeader("Accept", "application/json");
+                client.setTimeout(10000);
+
                 try {
-                    params.put("file", file);
+                    params.put("file", file1);
                 } catch(FileNotFoundException e) {}
+//                client.post("http://10.226.3.194:8080/sample", params, new AsyncHttpResponseHandler() {
                 client.post("http://10.226.3.235:8080/sample", params, new AsyncHttpResponseHandler() {
 
                     @Override
@@ -105,7 +127,21 @@ public class MainActivity extends AppCompatActivity {
                         // called when response HTTP status is "200 OK"
                         try {
                             Log.i(TAG, "aaaaaaaaaaaaaaaaaaaaaaaaaa" + new String(response, "UTF-8"));
+                            ObjectMapper mapper = new ObjectMapper();
+                            List<Fish> fishes = mapper.readValue(response, new TypeReference<List<Fish>>() {});
+                            Log.i(TAG, "bbbbbbbbbbbbbbbbbb" + fishes.toString());
+
+                            Fish fish = FishContainer.fishesMap.get(fishes.get(0).getId());
+                            Intent intent = new Intent(MainActivity.this, FishActivity.class);
+                            intent.putExtra("id", fish.getId());
+                            startActivity(intent);
                         } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        } catch (JsonParseException e) {
+                            e.printStackTrace();
+                        } catch (JsonMappingException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
@@ -166,7 +202,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
             createCameraPreview();
         }
     };
@@ -212,9 +247,11 @@ public class MainActivity extends AppCompatActivity {
             captureBuilder.addTarget(reader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
             // Orientation
-            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+//            int rotation = getWindowManager().getDefaultDisplay().getRotation();
+            int rotation = 90;
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory()+"/pic.jpg");
+            final String filePath = Environment.getExternalStorageDirectory()+"/pic.jpg";
+            final File file = new File(filePath);
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader reader) {
@@ -252,7 +289,6 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(CameraCaptureSession session, CaptureRequest request, TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(MainActivity.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
                     createCameraPreview();
                 }
             };
@@ -269,9 +305,6 @@ public class MainActivity extends AppCompatActivity {
                 public void onConfigureFailed(CameraCaptureSession session) {
                 }
             }, mBackgroundHandler);
-            try {
-                Thread.sleep(100);
-            } catch (Exception e) {}
             return file;
         } catch (CameraAccessException e) {
             e.printStackTrace();

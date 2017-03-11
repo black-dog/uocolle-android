@@ -1,6 +1,6 @@
 [
   {
-    "id": 1,
+    "id": "1",
     "name": "鯵",
     "hiragana": "あじ",
     "character": "ザ・大衆魚",
@@ -11,7 +11,7 @@
     "imageId": "aji"
   },
   {
-    "id": 2,
+    "id": "2",
     "name": "真鯛",
     "hiragana": "まだい",
     "character": "くさっても",
@@ -22,7 +22,7 @@
     "imageId": "madai"
   },
   {
-    "id": 3,
+    "id": "3",
     "name": "真ハタ",
     "hiragana": "まはた",
     "character": "たまに釣れる。",

@@ -42,14 +42,4 @@ public class CommonActivity extends AppCompatActivity {
         }
         return fishes;
     }
-
-    private JSONArray convertJsonArray(String jsonString) {
-        JSONArray json = null;
-        try {
-            json = new JSONArray(jsonString);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return json;
-    }
 }
